@@ -1,0 +1,87 @@
+--Aquellas usadas para insertar, modificar y eliminar un Customer, Staff y Actor.
+
+
+SELECT * FROM country co
+JOIN city ci
+on co.country_id = ci.country_id
+WHERE country ILIKE 'Chile';
+
+SELECT * FROM city;
+INSERT INTO city VALUES
+(default, 'Santiago', 22, default);
+
+SELECT * FROM address;
+INSERT INTO address VALUES
+(default, 'Olga Norte', null, 'Metropolitana', 601, null, 999123456, default);
+
+SELECT * FROM address
+WHERE address ilike 'Olga Norte';
+
+SELECT * FROM customer;
+INSERT INTO customer (store_id, first_name, last_name, email, address_id) VALUES
+(2, 'Jose', 'Perez', 'sin@correo.cl', 607) returning *;
+
+UPDATE customer SET active = 1 
+WHERE first_name = 'Jose' AND last_name = 'Perez' returning *;
+
+DELETE FROM customer 
+WHERE first_name = 'Jose' AND last_name = 'Perez';
+
+SELECT * FROM address;
+INSERT INTO address VALUES
+(default, 'Pepe Pecas', null, 'Metropolitana', 601, null, 992785501, default);
+
+SELECT * FROM address
+WHERE address ilike 'Diego SiPepe Pecaslva'
+
+SELECT * FROM staff;
+INSERT INTO staff (first_name, last_name, address_id, email, store_id, username) VALUES
+('Jose', 'Jose', 608, 'Jose.Jose@sakilacustomer.org',2, 'Juanito') returning *;
+
+UPDATE staff SET email = 'Jose.Jose@sakilastaff.org' 
+WHERE first_name = 'Jose' AND last_name = 'Jose' returning *;
+
+DELETE FROM staff
+WHERE first_name = 'Jose' AND last_name = 'Jose';
+
+SELECT * FROM actor;
+INSERT INTO actor VALUES
+(default, 'Maria', 'Mercedez', default) returning *;
+
+UPDATE actor SET last_name = 'Mercedez' 
+WHERE first_name = 'Maria' AND last_name = 'Mercedez' returning *;
+
+DELETE FROM actor
+WHERE actor_id = 201;
+
+
+--Listar todas las “rental” con los datos del “customer” dado un año y mes.
+
+SELECT ren.rental_id, ren.rental_date, ren.inventory_id, ren.customer_id, ren.return_date, cus.first_name, cus.last_name, cus.email 
+FROM rental ren
+JOIN customer cus
+ON ren.customer_id = cus.customer_id
+WHERE EXTRACT(YEAR FROM rental_date) = 2005
+AND EXTRACT(MONTH FROM rental_date) = 7;
+
+SELECT payment_id "Numero", payment_date "Fecha", amount "Total" FROM payment
+ORDER BY "Total";
+
+
+SELECT * FROM film 
+WHERE release_year = 2006 AND rental_rate > 4
+ORDER BY title;
+
+--Realiza un Diccionario de datos que contenga el nombre de las tablas y columnas, si éstas pueden ser nulas, y su tipo de dato correspondiente
+
+SELECT isc.table_name "Tabla", 	
+ isc.column_name "Columna",
+ isc.is_nullable  "Acepta Nulo",
+ isc.data_type "Tipo de dato"
+FROM
+ information_schema.columns isc
+INNER JOIN PG_CLASS t2 ON (t2.RELNAME = isc.TABLE_NAME)
+WHERE
+isc.TABLE_SCHEMA = 'public'
+ORDER BY
+isc.TABLE_NAME;
